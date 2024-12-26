@@ -24,7 +24,7 @@ A simple Python application that uses Google's Gemini AI model to generate conte
    # On Windows
    .\env\Scripts\activate
    # On Unix or MacOS
-   source env/bin/activate
+   source env/Scripts/activate
    ```
 
 4. Install the required packages:
