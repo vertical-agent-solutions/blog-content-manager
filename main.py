@@ -48,7 +48,8 @@ class ContentGenerator:
         - Use appropriate subheadings
         - Include a conclusion
         - Focus on providing valuable insights
-        - Be engaging and informative
+        - Be engaging, simple, and informative
+        - Be humorous when appropriate
         
         Additional context: {topic['description']}
         """
