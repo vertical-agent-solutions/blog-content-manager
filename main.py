@@ -3,18 +3,23 @@
 # Standard library imports
 import json
 import os
-import sqlite3
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 import re
 
 # Third party imports
 from dotenv import load_dotenv
 import google.generativeai as genai
 
+# Local imports
+from database import DatabaseManager
+
 # Load environment variables
 load_dotenv()
+
+# Configure AI model once
+THINKING_MODEL = "gemini-2.0-flash-thinking-exp-1219"
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel(THINKING_MODEL)
 
 def slugify(text: str) -> str:
     """Convert text to URL-friendly slug."""
@@ -23,69 +28,14 @@ def slugify(text: str) -> str:
     text = re.sub(r'[-\s]+', '-', text)
     return text.strip('-')
 
-class DatabaseManager:
-    def __init__(self, db_name: str = "blog.db"):
-        self.db_path = Path(db_name)
-        self.conn = sqlite3.connect(db_name)
-        self.conn.row_factory = sqlite3.Row
-        self.setup_database()
-    
-    def setup_database(self):
-        """Initialize database with schema."""
-        with open('schema.sql', 'r') as f:
-            self.conn.executescript(f.read())
-            self.conn.commit()
-    
-    def seed_categories(self) -> None:
-        """Seed initial categories."""
-        categories = [
-            ("Artificial Intelligence", "artificial-intelligence", "Topics related to AI technology and applications"),
-            ("Technology Trends", "technology-trends", "Current and future technology trends"),
-            ("Industry Solutions", "industry-solutions", "AI applications in specific industries")
-        ]
-        
-        cursor = self.conn.cursor()
-        cursor.executemany(
-            """INSERT OR IGNORE INTO categories (name, slug, description)
-               VALUES (?, ?, ?)""",
-            categories
-        )
-        self.conn.commit()
-    
-    def seed_topic_ideas(self, topics: List[Dict]) -> None:
-        """Seed initial topic ideas."""
-        cursor = self.conn.cursor()
-        for topic in topics:
-            cursor.execute(
-                """INSERT OR IGNORE INTO topic_ideas 
-                   (title, slug, description, category_id, target_word_count)
-                   VALUES (?, ?, ?, ?, ?)""",
-                (
-                    topic['title'],
-                    slugify(topic['title']),
-                    topic['description'],
-                    topic['category_id'],
-                    topic.get('target_word_count', 1500)
-                )
-            )
-        self.conn.commit()
-
 class ContentGenerator:
-    def __init__(self, model_name: str = "gemini-pro"):
-        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model = genai.GenerativeModel(model_name)
-        self.db = DatabaseManager()
+    def __init__(self, db: DatabaseManager):
+        self.model = model  # Use shared model instance
+        self.db = db
     
     def generate_article(self, topic_id: int) -> Dict:
         """Generate article content for a given topic."""
-        cursor = self.db.conn.cursor()
-        topic = cursor.execute(
-            """SELECT t.*, c.name as category_name 
-               FROM topic_ideas t 
-               JOIN categories c ON t.category_id = c.id 
-               WHERE t.id = ?""",
-            (topic_id,)
-        ).fetchone()
+        topic = self.db.get_topic_details(topic_id)
         
         prompt = f"""
         Write a comprehensive article about: {topic['title']}
@@ -112,9 +62,8 @@ class ContentGenerator:
         }
 
 class SEOOptimizer:
-    def __init__(self, model_name: str = "gemini-pro"):
-        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model = genai.GenerativeModel(model_name)
+    def __init__(self):
+        self.model = model  # Use shared model instance
     
     def optimize_content(self, content: str, title: str) -> Dict:
         """Optimize content for SEO."""
@@ -136,7 +85,7 @@ class SEOOptimizer:
         response = self.model.generate_content(prompt)
         return json.loads(response.text)
 
-def seed_initial_topics():
+def seed_initial_topics(db: DatabaseManager):
     """Seed the database with initial topics."""
     topics = [
         {
@@ -177,24 +126,21 @@ def seed_initial_topics():
         }
     ]
     
-    db = DatabaseManager()
     db.seed_categories()
     db.seed_topic_ideas(topics)
 
 def main():
     # Initialize database and seed data
     print("Setting up database...")
-    seed_initial_topics()
+    db = DatabaseManager()
+    seed_initial_topics(db)
     
-    # Initialize content generator
-    generator = ContentGenerator()
+    # Initialize content generator and SEO optimizer
+    generator = ContentGenerator(db)
     seo_optimizer = SEOOptimizer()
     
-    # Example: Generate article for first topic
-    cursor = generator.db.conn.cursor()
-    topic = cursor.execute(
-        "SELECT id FROM topic_ideas WHERE status = 'draft' LIMIT 1"
-    ).fetchone()
+    # Get draft topic
+    topic = db.get_draft_topic()
     
     if topic:
         print(f"\nGenerating article for topic ID: {topic['id']}")
@@ -203,30 +149,8 @@ def main():
         print("\nOptimizing content for SEO...")
         seo_results = seo_optimizer.optimize_content(article['content'], article['title'])
         
-        # Save article
-        cursor.execute("""
-            INSERT INTO articles (
-                topic_id, title, slug, content, seo_score,
-                meta_description, keywords, seo_feedback
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            topic['id'],
-            article['title'],
-            article['slug'],
-            article['content'],
-            seo_results['seo_score'],
-            seo_results['meta_description'],
-            json.dumps(seo_results['keywords']),
-            seo_results['seo_feedback']
-        ))
-        
-        # Update topic status
-        cursor.execute(
-            "UPDATE topic_ideas SET status = 'published' WHERE id = ?",
-            (topic['id'],)
-        )
-        
-        generator.db.conn.commit()
+        # Save article and update topic status
+        db.save_article(article, seo_results)
         
         print(f"\nArticle generated and saved!")
         print(f"SEO Score: {seo_results['seo_score']}")
