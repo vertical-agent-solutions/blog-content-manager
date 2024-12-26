@@ -1,8 +1,16 @@
 # Standard library imports
+import re
 import sqlite3
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
+
+def slugify(text: str) -> str:
+    """Convert text to URL-friendly slug."""
+    text = text.lower()
+    text = re.sub(r'[^\w\s-]', '', text)
+    text = re.sub(r'[-\s]+', '-', text)
+    return text.strip('-')
 
 class DatabaseManager:
     def __init__(self, db_name: str = "blog.db"):
@@ -63,25 +71,19 @@ class DatabaseManager:
             (topic_id,)
         ).fetchone()
     
-    def save_article(self, article: Dict, seo_results: Dict) -> None:
+    def save_article(self, article: Dict) -> None:
         """Save generated article and update topic status."""
         cursor = self.conn.cursor()
         
         # Save article
         cursor.execute("""
-            INSERT INTO articles (
-                topic_id, title, slug, content, seo_score,
-                meta_description, keywords, seo_feedback
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO articles (topic_id, title, slug, content)
+            VALUES (?, ?, ?, ?)
         """, (
             article['topic_id'],
             article['title'],
             article['slug'],
-            article['content'],
-            seo_results['seo_score'],
-            seo_results['meta_description'],
-            json.dumps(seo_results['keywords']),
-            seo_results['seo_feedback']
+            article['content']
         ))
         
         # Update topic status

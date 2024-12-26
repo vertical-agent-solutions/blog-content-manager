@@ -1,5 +1,4 @@
 # Standard library imports
-import json
 from typing import Dict
 
 # Third party imports
@@ -40,28 +39,4 @@ class ContentGenerator:
             'topic_id': topic_id,
             'title': topic['title'],
             'slug': topic['slug']
-        }
-
-class SEOOptimizer:
-    def __init__(self, model: genai.GenerativeModel):
-        self.model = model
-    
-    def optimize_content(self, content: str, title: str) -> Dict:
-        """Optimize content for SEO."""
-        prompt = f"""
-        Analyze this article for SEO optimization:
-        Title: {title}
-        
-        Provide feedback in JSON format:
-        {{
-            "seo_score": float (1-10),
-            "meta_description": "compelling 155-character description",
-            "keywords": ["list", "of", "relevant", "keywords"],
-            "seo_feedback": "detailed feedback and suggestions"
-        }}
-        
-        Content to analyze: {content}
-        """
-        
-        response = self.model.generate_content(prompt)
-        return json.loads(response.text) 
+        } 

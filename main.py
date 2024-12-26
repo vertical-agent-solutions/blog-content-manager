@@ -4,7 +4,7 @@
 import os
 import json
 from typing import Dict, List
-import re
+from pathlib import Path
 
 # Third party imports
 from dotenv import load_dotenv
@@ -12,7 +12,7 @@ import google.generativeai as genai
 
 # Local imports
 from database import DatabaseManager
-from content_generator import ContentGenerator, SEOOptimizer
+from content_generator import ContentGenerator
 
 # Load environment variables
 load_dotenv()
@@ -21,13 +21,6 @@ load_dotenv()
 THINKING_MODEL = "gemini-2.0-flash-thinking-exp-1219"
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel(THINKING_MODEL)
-
-def slugify(text: str) -> str:
-    """Convert text to URL-friendly slug."""
-    text = text.lower()
-    text = re.sub(r'[^\w\s-]', '', text)
-    text = re.sub(r'[-\s]+', '-', text)
-    return text.strip('-')
 
 def load_seed_data() -> Dict:
     """Load seed data from topics.json."""
@@ -46,14 +39,19 @@ def seed_initial_topics(db: DatabaseManager):
     db.seed_topic_ideas(seed_data['topics'])
 
 def main():
+    # Delete existing database if it exists
+    db_path = Path("blog.db")
+    if db_path.exists():
+        print("Removing existing database...")
+        db_path.unlink()
+    
     # Initialize database and seed data
-    print("Setting up database...")
+    print("Setting up fresh database...")
     db = DatabaseManager()
     seed_initial_topics(db)
     
-    # Initialize content generator and SEO optimizer
+    # Initialize content generator
     generator = ContentGenerator(db, model)
-    seo_optimizer = SEOOptimizer(model)
     
     # Get draft topic
     topic = db.get_draft_topic()
@@ -62,15 +60,13 @@ def main():
         print(f"\nGenerating article for topic ID: {topic['id']}")
         article = generator.generate_article(topic['id'])
         
-        print("\nOptimizing content for SEO...")
-        seo_results = seo_optimizer.optimize_content(article['content'], article['title'])
-        
-        # Save article and update topic status
-        db.save_article(article, seo_results)
+        # Save article
+        db.save_article(article)
         
         print(f"\nArticle generated and saved!")
-        print(f"SEO Score: {seo_results['seo_score']}")
-        print(f"Keywords: {', '.join(seo_results['keywords'])}")
+        print("\nGenerated Article:")
+        print("=" * 80)
+        print(article['content'])
 
 if __name__ == "__main__":
     main()
