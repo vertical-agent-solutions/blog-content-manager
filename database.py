@@ -17,19 +17,13 @@ class DatabaseManager:
             self.conn.executescript(f.read())
             self.conn.commit()
     
-    def seed_categories(self) -> None:
-        """Seed initial categories."""
-        categories = [
-            ("Artificial Intelligence", "artificial-intelligence", "Topics related to AI technology and applications"),
-            ("Technology Trends", "technology-trends", "Current and future technology trends"),
-            ("Industry Solutions", "industry-solutions", "AI applications in specific industries")
-        ]
-        
+    def seed_category(self, category: Dict) -> None:
+        """Seed a single category."""
         cursor = self.conn.cursor()
-        cursor.executemany(
+        cursor.execute(
             """INSERT OR IGNORE INTO categories (name, slug, description)
                VALUES (?, ?, ?)""",
-            categories
+            (category['name'], category['slug'], category['description'])
         )
         self.conn.commit()
     

@@ -1,0 +1,57 @@
+{
+    "categories": [
+        {
+            "name": "Artificial Intelligence",
+            "slug": "artificial-intelligence",
+            "description": "Topics related to AI technology and applications"
+        },
+        {
+            "name": "Technology Trends",
+            "slug": "technology-trends",
+            "description": "Current and future technology trends"
+        },
+        {
+            "name": "Industry Solutions",
+            "slug": "industry-solutions",
+            "description": "AI applications in specific industries"
+        }
+    ],
+    "topics": [
+        {
+            "title": "What are vertical AI agents, and why do they matter?",
+            "description": "Explore the concept of vertical AI agents and their impact on specific industries",
+            "category_id": 1,
+            "target_word_count": 2000
+        },
+        {
+            "title": "Industries that are ripe for AI disruption",
+            "description": "Analysis of industries most likely to be transformed by AI technology",
+            "category_id": 3,
+            "target_word_count": 2500
+        },
+        {
+            "title": "AI in Healthcare: Personalized Diagnostics for Every Patient",
+            "description": "How AI is revolutionizing healthcare through personalized medicine",
+            "category_id": 3,
+            "target_word_count": 2000
+        },
+        {
+            "title": "Real Estate and AI: Transforming Property Searches and Offers",
+            "description": "The impact of AI on real estate industry processes and customer experience",
+            "category_id": 3,
+            "target_word_count": 1800
+        },
+        {
+            "title": "Vertical AI in Education: From Gamified Tools to Customized Learning Paths",
+            "description": "How AI is personalizing education and improving learning outcomes",
+            "category_id": 3,
+            "target_word_count": 2200
+        },
+        {
+            "title": "The Future of Modular AI: Daisy Chains and Specialized Systems",
+            "description": "Exploring the concept of modular AI systems and their potential applications",
+            "category_id": 1,
+            "target_word_count": 2500
+        }
+    ]
+} 
