@@ -103,19 +103,41 @@ def reset_database(request):
 
 def seed_database(request):
     if request.method == 'POST':
-        # Load seed data from JSON
-        seed_path = Path(settings.BASE_DIR) / 'topics.json'
-        with open(seed_path) as f:
-            seed_data = json.load(f)
-        
-        # Seed categories
-        for cat_data in seed_data['categories']:
-            Category.objects.create(**cat_data)
-        
-        # Seed topics
-        for topic_data in seed_data['topics']:
-            Topic.objects.create(**topic_data)
-        
-        messages.success(request, 'Database seeded successfully!')
-        return redirect('core:home')
+        try:
+            # Load seed data from JSON
+            seed_path = Path(settings.BASE_DIR) / 'topics.json'
+            with open(seed_path) as f:
+                seed_data = json.load(f)
+            
+            # Create a dictionary to map old category IDs to new ones
+            category_id_map = {}
+            
+            # Seed categories first and build the mapping
+            for index, cat_data in enumerate(seed_data['categories'], 1):
+                category = Category.objects.create(
+                    name=cat_data['name'],
+                    slug=cat_data['slug'],
+                    description=cat_data['description']
+                )
+                # Map the position in the list (1-based) to the new category ID
+                category_id_map[index] = category.id
+            
+            # Seed topics using the mapped category IDs
+            for topic_data in seed_data['topics']:
+                # Map the old category_id to the new one
+                new_category_id = category_id_map[topic_data['category_id']]
+                Topic.objects.create(
+                    title=topic_data['title'],
+                    description=topic_data['description'],
+                    category_id=new_category_id,
+                    target_word_count=topic_data['target_word_count']
+                )
+            
+            messages.success(request, 'Database seeded successfully!')
+            return redirect('core:home')
+            
+        except Exception as e:
+            messages.error(request, f'Error seeding database: {str(e)}')
+            return redirect('core:home')
+            
     return render(request, 'core/db/seed.html') 
