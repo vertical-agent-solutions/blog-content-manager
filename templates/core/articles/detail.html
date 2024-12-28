@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
+{% load markdown_extras %}
 
 {% block content %}
 <div class="row">
@@ -20,10 +21,40 @@
                 </small>
             </div>
             
-            <div class="article-content">
-                {{ article.content|safe|linebreaks }}
+            <div class="article-content markdown-body">
+                {{ article.content|markdown|safe }}
             </div>
         </article>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .markdown-body {
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+    .markdown-body p {
+        margin-bottom: 1.2rem;
+    }
+    .markdown-body ul,
+    .markdown-body ol {
+        margin-bottom: 1.2rem;
+        padding-left: 2rem;
+    }
+    .markdown-body blockquote {
+        border-left: 4px solid #e9ecef;
+        padding-left: 1rem;
+        color: #6c757d;
+        margin: 1.5rem 0;
+    }
+</style>
 {% endblock %} 

@@ -15,14 +15,12 @@ class AIService:
         Additional context: {topic.description}
         
         Requirements:
+        - Write in simple markdown format
         - The article should be around {topic.target_word_count} words long
-        - Write in markdown format
         - Include a compelling introduction
         - Use appropriate subheadings
         - Include a conclusion
-        - Focus on providing valuable insights
-        - Be engaging, simple, and informative
-        - Add source references when available
+        - Focus on providing clear and valuable insights
         """
         
         response = self.model.generate_content(prompt)

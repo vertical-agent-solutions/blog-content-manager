@@ -3,3 +3,4 @@ python-dotenv
 google-generativeai
 django-bootstrap5
 whitenoise
+markdown2
