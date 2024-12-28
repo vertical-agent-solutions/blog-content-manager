@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3 text-center">
+        <h1 class="mb-4">Reset Database</h1>
+        <div class="alert alert-warning">
+            This will delete all categories, topics, and articles. This action cannot be undone.
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-lg">Reset Database</button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

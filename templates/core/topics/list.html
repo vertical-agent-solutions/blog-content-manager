@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Topics</h1>
+    <div>
+        <a href="{% url 'core:topic_create' %}" class="btn btn-primary me-2">Create Topic</a>
+        <a href="{% url 'core:topic_generate' %}" class="btn btn-success">Generate Topics</a>
+    </div>
+</div>
+
+<div class="row">
+    {% for topic in topics %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ topic.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ topic.category.name }}</h6>
+                <p class="card-text">{{ topic.description }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-{% if topic.status == 'draft' %}secondary{% elif topic.status == 'in_progress' %}warning{% else %}success{% endif %}">
+                        {{ topic.status|title }}
+                    </span>
+                    {% if topic.status == 'draft' %}
+                    <a href="{% url 'core:article_generate' topic.id %}" class="btn btn-primary btn-sm">Generate Article</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <p class="text-center">No topics found. Try creating one or generating some!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

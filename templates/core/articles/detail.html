@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:article_list' %}">Articles</a></li>
+                <li class="breadcrumb-item active">{{ article.title }}</li>
+            </ol>
+        </nav>
+
+        <article>
+            <h1 class="mb-3">{{ article.title }}</h1>
+            <div class="text-muted mb-4">
+                <small>
+                    Category: {{ article.topic.category.name }} |
+                    Generated: {{ article.created_at|date:"M d, Y" }}
+                </small>
+            </div>
+            
+            <div class="article-content">
+                {{ article.content|safe|linebreaks }}
+            </div>
+        </article>
+    </div>
+</div>
+{% endblock %} 

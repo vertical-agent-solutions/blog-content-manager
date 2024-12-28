@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3 text-center">
+        <h1 class="mb-4">Seed Database</h1>
+        <div class="alert alert-info">
+            This will populate the database with initial categories and topics from topics.json
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning btn-lg">Seed Database</button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

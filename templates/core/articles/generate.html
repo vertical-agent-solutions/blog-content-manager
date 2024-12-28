@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1 class="mb-4">Generate Article</h1>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Topic Details</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ topic.category.name }}</h6>
+                <p class="card-text">{{ topic.description }}</p>
+                <p class="card-text"><small class="text-muted">Target word count: {{ topic.target_word_count }}</small></p>
+            </div>
+        </div>
+        
+        <form method="post" class="d-grid">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-lg">Generate Article</button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

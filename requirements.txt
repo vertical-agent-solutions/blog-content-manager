@@ -1,2 +1,5 @@
+django==5.0
 python-dotenv
 google-generativeai
+django-bootstrap5
+whitenoise
