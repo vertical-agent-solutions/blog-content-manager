@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Review Generated Topics</h1>
+            <a href="{% url 'core:topic_generate' %}" class="btn btn-outline-primary">Generate More</a>
+        </div>
+
+        <form method="post" action="{% url 'core:topic_save' %}">
+            {% csrf_token %}
+            <input type="hidden" name="category_id" value="{{ category.id }}">
+            
+            {% for topic in topics %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="selected_topics" 
+                               value="{{ forloop.counter0 }}" id="topic{{ forloop.counter }}">
+                        <label class="form-check-label" for="topic{{ forloop.counter }}">
+                            <h5 class="card-title mb-1">{{ topic.title }}</h5>
+                        </label>
+                    </div>
+                    <p class="card-text text-muted ps-4">{{ topic.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted">Select topics to save</span>
+                <button type="submit" class="btn btn-success">Save Selected Topics</button>
+            </div>
+
+            <!-- Store topics data as JSON for the save view -->
+            <input type="hidden" name="topics_data" value="{{ topics_json }}">
+        </form>
+    </div>
+</div>
+{% endblock %} 

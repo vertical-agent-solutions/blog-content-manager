@@ -10,6 +10,7 @@ urlpatterns = [
     path('topics/', views.topic_list, name='topic_list'),
     path('topics/create/', views.topic_create, name='topic_create'),
     path('topics/generate/', views.topic_generate, name='topic_generate'),
+    path('topics/save/', views.topic_save, name='topic_save'),
     path('topics/<slug:slug>/', views.topic_detail, name='topic_detail'),
     
     # Articles URLs

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import HttpResponse
 import json
 from pathlib import Path
+from django.core.serializers.json import DjangoJSONEncoder
 
 from .models import Category, Topic, Article
 from .services.ai_service import AIService
@@ -43,20 +44,41 @@ def topic_generate(request):
         
         topic_ideas = ai_service.generate_topic_ideas(category.name, count)
         
-        # Save generated topics
-        for idea in topic_ideas:
-            Topic.objects.create(
-                category=category,
-                title=idea['title'],
-                description=idea['description'],
-                target_word_count=idea['target_word_count']
-            )
+        # Prepare topics data for the template
+        topics_json = json.dumps(topic_ideas)
         
-        messages.success(request, f'Generated {len(topic_ideas)} new topics!')
-        return redirect('core:topic_list')
+        return render(request, 'core/topics/review.html', {
+            'category': category,
+            'topics': topic_ideas,
+            'topics_json': topics_json
+        })
     
     categories = Category.objects.all()
     return render(request, 'core/topics/generate.html', {'categories': categories})
+
+def topic_save(request):
+    if request.method == 'POST':
+        category_id = request.POST.get('category_id')
+        selected_indices = request.POST.getlist('selected_topics')
+        topics_data = json.loads(request.POST.get('topics_data'))
+        
+        category = get_object_or_404(Category, id=category_id)
+        
+        # Save only selected topics
+        saved_count = 0
+        for index in selected_indices:
+            topic_data = topics_data[int(index)]
+            Topic.objects.create(
+                category=category,
+                title=topic_data['title'],
+                description=topic_data['description']
+            )
+            saved_count += 1
+        
+        messages.success(request, f'Saved {saved_count} topics successfully!')
+        return redirect('core:topic_list')
+    
+    return redirect('core:topic_generate')
 
 def topic_detail(request, slug):
     topic = get_object_or_404(Topic.objects.select_related('category'), slug=slug)
