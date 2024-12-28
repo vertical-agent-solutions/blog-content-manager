@@ -1,6 +1,22 @@
-# Content Management with AI and Python
+# Content Management with AI
 
-A Django application that uses Google's Gemini AI model to generate blog content. This application allows you to manage topics, generate articles, and organize content by categories.
+A Django application that uses Google's Gemini AI to generate blog content. This application allows you to manage topics, generate articles, and organize content by categories.
+
+## Features
+
+- Topic Management
+  - Create topics manually
+  - Generate AI-powered topic suggestions
+  - Review and select topics before saving
+
+- Content Generation
+  - Generate full articles from topics
+  - Markdown formatting support
+
+- Database Management
+  - Reset database
+  - Seed with sample data
+  - Track content status (draft, in progress, published)
 
 ## Prerequisites
 
@@ -12,9 +28,10 @@ A Django application that uses Google's Gemini AI model to generate blog content
 
 1. Clone this repository
 
-2. Create a `.env` file in the root directory with your Gemini API key:
+2. Create a `.env` file in the root directory:
    ```
-   GEMINI_API_KEY=your_api_key_here
+   DJANGO_SECRET_KEY=your-django-secret-key
+   GEMINI_API_KEY=your-gemini-api-key
    ```
 
 3. Create and activate a virtual environment:
@@ -44,21 +61,25 @@ A Django application that uses Google's Gemini AI model to generate blog content
 
 The application will be available at http://127.0.0.1:8000/
 
-## Features
+## Usage
 
-- Topic Management
-  - Create topics manually
-  - Generate topic ideas using AI
-  - Organize topics by categories
+1. Initial Setup
+   - Visit the home page
+   - Use "Seed Database" to populate initial categories and topics
 
-- Content Generation
-  - Generate full articles from topics
-  - Markdown formatting support
+2. Managing Topics
+   - View all topics in the Topics section
+   - Create topics manually using the form
+   - Generate topic ideas using AI:
+     - Select a category
+     - Choose number of topics to generate
+     - Review generated topics
+     - Select which topics to save
 
-- Database Management
-  - Reset database
-  - Seed with sample data
-  - Track content status
+3. Generating Articles
+   - Select a draft topic
+   - Click "Generate Article"
+   - Article is saved with markdown formatting
 
 ## Project Structure
 
@@ -67,6 +88,7 @@ content-agent/
 ├── blog_generator/          # Django project settings
 ├── core/                    # Main application
 │   ├── services/           # AI services
+│   │   └── ai_service.py   # Gemini AI integration
 │   ├── templates/          # HTML templates
 │   ├── models.py           # Database models
 │   └── views.py            # View logic
@@ -76,23 +98,13 @@ content-agent/
 └── topics.json             # Seed data
 ```
 
-## Usage
-
-1. After starting the server, visit the home page
-2. Use the "Seed Database" button to populate initial categories and topics
-3. Navigate to Topics to:
-   - View existing topics
-   - Create new topics
-   - Generate topic ideas
-4. Select a topic and click "Generate Article" to create content
-5. View all generated articles in the Articles section
-
 ## Development
 
 - Built with Django 5.0
 - Uses Bootstrap 5 for UI
 - SQLite database for local development
 - Google's Gemini AI for content generation
+- Markdown support for article formatting
 
 ## License
 
