@@ -6,25 +6,23 @@ from django.conf import settings
 class AIService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-pro")
+        self.model = genai.GenerativeModel("gemini-2.0-flash-exp")
 
     def generate_article(self, topic: Dict) -> str:
         """Generate article content for a given topic."""
         prompt = f"""
-        Write a comprehensive article about: {topic.title}
-        Category: {topic.category.name}
-        Target word count: {topic.target_word_count}
+        Write a comprehensive article about this topic: {topic.title}
+        Additional context: {topic.description}
         
         Requirements:
+        - The article should be around {topic.target_word_count} words long
         - Write in markdown format
         - Include a compelling introduction
         - Use appropriate subheadings
         - Include a conclusion
         - Focus on providing valuable insights
         - Be engaging, simple, and informative
-        - Be humorous when appropriate
-        
-        Additional context: {topic.description}
+        - Add source references when available
         """
         
         response = self.model.generate_content(prompt)
