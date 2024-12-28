@@ -4,4 +4,4 @@ from .models import Topic
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['title', 'description', 'category', 'target_word_count'] 
+        fields = ['title', 'description', 'category'] 

@@ -16,7 +16,7 @@ class AIService:
         
         Requirements:
         - Write in simple markdown format
-        - The article should be around {topic.target_word_count} words long
+        - The article should be near 2500 words long
         - Include a compelling introduction
         - Use appropriate subheadings
         - Include a conclusion
@@ -28,27 +28,24 @@ class AIService:
 
     def generate_topic_ideas(self, category_name: str, count: int = 3) -> list:
         """Generate topic ideas for a given category."""
-        prompt = f"""
-        Generate {count} blog topic ideas for the category: {category_name}
+        prompt = """
+        Generate {} blog topic ideas for the category: {}
         
         For each topic provide:
         - Title
         - Brief description (2-3 sentences)
-        - Target word count (between 1000-2500)
         
-        Return the response in this exact format:
-        1. Title: [topic title]
-           Description: [description]
-           Word Count: [number]
-        
-        2. Title: [topic title]
-           Description: [description]
-           Word Count: [number]
-        
-        (and so on...)
-        """
+        Return the response in JSON format:
+        [
+            {"title": "Topic Title", "description": "Brief description"},
+            {"title": "Topic Title", "description": "Brief description"},
+            {"title": "Topic Title", "description": "Brief description"}
+        ]
+        """.format(category_name=category_name, count=count)
+        print(prompt)
         
         response = self.model.generate_content(prompt)
+        print(response.text)
         return self._parse_topic_ideas(response.text)
 
     def _parse_topic_ideas(self, text: str) -> list:
@@ -67,8 +64,6 @@ class AIService:
                 current_topic = {'title': line[6:].strip()}
             elif line.startswith('Description:'):
                 current_topic['description'] = line[12:].strip()
-            elif line.startswith('Word Count:'):
-                current_topic['target_word_count'] = int(line[11:].strip())
         
         if current_topic:
             topics.append(current_topic)

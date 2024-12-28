@@ -54,7 +54,6 @@ The application will be available at http://127.0.0.1:8000/
 - Content Generation
   - Generate full articles from topics
   - Markdown formatting support
-  - Customizable word count targets
 
 - Database Management
   - Reset database

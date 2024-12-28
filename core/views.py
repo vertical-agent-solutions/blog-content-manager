@@ -129,8 +129,7 @@ def seed_database(request):
                 Topic.objects.create(
                     title=topic_data['title'],
                     description=topic_data['description'],
-                    category_id=new_category_id,
-                    target_word_count=topic_data['target_word_count']
+                    category_id=new_category_id
                 )
             
             messages.success(request, 'Database seeded successfully!')
