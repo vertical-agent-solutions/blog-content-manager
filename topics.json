@@ -14,44 +14,153 @@
             "name": "Industry Solutions",
             "slug": "industry-solutions",
             "description": "AI applications in specific industries"
+        },
+        {
+            "name": "Innovation and Technology",
+            "slug": "innovation-and-technology",
+            "description": "Exploring the latest advancements in technology and their impact"
+        },
+        {
+            "name": "Lifestyle and Design",
+            "slug": "lifestyle-and-design",
+            "description": "Innovations in lifestyle, design, and sustainability"
+        },
+        {
+            "name": "Art and Creativity",
+            "slug": "art-and-creativity",
+            "description": "The intersection of art, technology, and creativity"
+        },
+        {
+            "name": "Social Impact and Sustainability",
+            "slug": "social-impact-and-sustainability",
+            "description": "Innovative solutions for sustainable living and social impact"
+        },
+        {
+            "name": "Society and Culture",
+            "slug": "society-and-culture",
+            "description": "Exploring the intersection of technology, society, and culture"
         }
     ],
     "topics": [
         {
             "title": "What are vertical AI agents, and why do they matter?",
-            "description": "Explore the concept of vertical AI agents and their impact on specific industries",
+            "description": "Define vertical AI agents, explain their unique functionality compared to general AI systems, and provide examples of their application in industries like healthcare, education, and finance. Discuss how they specialize in solving specific problems and their potential for transforming niche markets. Highlight challenges in their development and the implications for business innovation.",
             "category_id": 1,
-            "target_word_count": 2000
+            "target_word_count": 2500
         },
         {
             "title": "Industries that are ripe for AI disruption",
-            "description": "Analysis of industries most likely to be transformed by AI technology",
+            "description": "Analyze the industries most likely to be transformed by AI technology, including healthcare, real estate, logistics, and retail. Provide specific use cases such as automated diagnostics in healthcare, property valuation tools in real estate, and predictive analytics in logistics. Discuss economic, social, and workforce implications, as well as barriers to AI adoption in these industries.",
             "category_id": 3,
             "target_word_count": 2500
         },
         {
             "title": "AI in Healthcare: Personalized Diagnostics for Every Patient",
-            "description": "How AI is revolutionizing healthcare through personalized medicine",
+            "description": "Explore how AI is enabling personalized medicine by analyzing individual patient data to improve diagnostics, predict diseases, and recommend treatments. Include specific technologies like machine learning models, wearable devices, and genomic data analysis. Discuss ethical considerations, data privacy, and the future of patient-centered healthcare.",
             "category_id": 3,
-            "target_word_count": 2000
+            "target_word_count": 2500
         },
         {
             "title": "Real Estate and AI: Transforming Property Searches and Offers",
-            "description": "The impact of AI on real estate industry processes and customer experience",
+            "description": "Examine how AI is changing the real estate landscape, from personalized property recommendations to automated valuation models. Discuss technologies like AI-powered chatbots for customer service, virtual tours, and market trend analysis tools. Highlight how these advancements are improving efficiency and accessibility for buyers and sellers.",
             "category_id": 3,
-            "target_word_count": 1800
+            "target_word_count": 2500
         },
         {
             "title": "Vertical AI in Education: From Gamified Tools to Customized Learning Paths",
-            "description": "How AI is personalizing education and improving learning outcomes",
+            "description": "Investigate the use of AI in personalizing education, including tools that gamify learning and adapt to students' unique needs. Provide examples of AI systems creating customized curriculums, tracking progress, and improving engagement. Discuss the benefits for both students and educators, as well as challenges like cost and accessibility.",
             "category_id": 3,
-            "target_word_count": 2200
+            "target_word_count": 2500
         },
         {
-            "title": "The Future of Modular AI: Daisy Chains and Specialized Systems",
-            "description": "Exploring the concept of modular AI systems and their potential applications",
+            "title": "The Future of Modular AI: Lightweight and Localized",
+            "description": "Detail the concept of modular AI systems that can operate independently or in combinations to perform specific tasks. Discuss their lightweight design and ability to run on localized devices like smartphones or IoT systems. Provide examples in industries such as healthcare and retail, and analyze the potential to democratize AI accessibility while addressing privacy concerns.",
             "category_id": 1,
+            "target_word_count": 2500
+        },
+        {
+            "title": "The Future of Gamified Learning: Merging Education and Entertainment",
+            "description": "Explore the principles of gamification and their application in education. Discuss how gaming mechanics like rewards, levels, and interactivity enhance learning outcomes. Provide examples of successful gamified learning platforms and analyze their impact on student motivation, retention, and skill-building. Include potential drawbacks like over-reliance on gaming elements.",
+            "category_id": 4,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Revolutionizing Hiring: The Role of AI in Talent Matching",
+            "description": "Investigate how AI is streamlining the hiring process through tools like candidate screening algorithms, skill-based matching, and predictive analytics. Discuss examples of platforms leveraging AI for recruitment and the benefits they provide to employers and job seekers. Address ethical concerns like bias in AI systems and the need for transparency.",
+            "category_id": 3,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Automation in Everyday Life: From Restaurants to Home Care",
+            "description": "Examine how automation is being integrated into daily life, including automated ordering systems in restaurants, smart home devices, and health trackers. Provide case studies of successful automation implementations and discuss their convenience, cost implications, and ethical concerns like data security and job displacement.",
+            "category_id": 4,
+            "target_word_count": 2500
+        },
+        {
+            "title": "The Evolution of Open Source Software in Creative Industries",
+            "description": "Discuss the role of open-source software in driving innovation within creative fields like design, music, and video production. Highlight examples of open-source tools transforming workflows, such as music editing platforms and collaborative design apps. Analyze the benefits for creators and the challenges of maintaining open-source projects.",
+            "category_id": 6,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Designing the Perfect Workspace: Tools for Productivity and Comfort",
+            "description": "Offer practical advice for creating a workspace that maximizes productivity and comfort. Discuss ergonomic furniture, lighting, and decor choices, as well as high-tech additions like smart desks and IoT integration. Provide tips for setting up a budget-friendly workspace and balancing aesthetics with functionality.",
+            "category_id": 5,
+            "target_word_count": 2500
+        },
+        {
+            "title": "The Future of Wearables: Tracking Health for Pets and Humans Alike",
+            "description": "Explore the latest advancements in wearable technology, including fitness trackers, pet health monitors, and wearable cameras. Discuss their impact on health monitoring, convenience, and safety. Analyze challenges like data privacy and accuracy, and predict future trends in wearable tech innovation.",
+            "category_id": 5,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Fashion Meets Function: Footwear, Shades, and Wearables for Active Lifestyles",
+            "description": "Analyze the growing demand for products that combine style and functionality, with a focus on innovative footwear, tech-infused sunglasses, and ergonomic wearable devices. Discuss the challenges of balancing aesthetics with utility and highlight emerging trends in smart fashion.",
+            "category_id": 5,
+            "target_word_count": 2500
+        },
+        {
+            "title": "AI as a Muse: How Technology is Changing the Creative Process",
+            "description": "Examine the impact of AI on artistic creation, including AI-generated art, music composition, and collaborative platforms. Discuss the ethical implications of AI as a creative partner, ownership issues, and how it’s redefining traditional notions of creativity.",
+            "category_id": 6,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Turning Your Creative Passion into a Sustainable Business",
+            "description": "Provide strategies for monetizing creative talents, including branding, leveraging social media, and exploring e-commerce platforms. Offer case studies of successful creators and discuss the balance between artistic integrity and business growth.",
+            "category_id": 6,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Reimagining Community Spaces: From Dog Parks to Nature Preserves",
+            "description": "Explore innovative designs for community spaces that cater to diverse populations, including pet-friendly parks, urban gardens, and nature preserves. Discuss the challenges of inclusivity, environmental sustainability, and funding, with examples of successful projects.",
+            "category_id": 7,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Philanthropy in Everyday Life: Affordable, Accessible Solutions",
+            "description": "Discuss ways individuals can contribute to philanthropy through low-cost or innovative means. Highlight examples like micro-funding platforms, community projects, and affordable healthcare solutions, and explore the impact of these efforts on communities.",
+            "category_id": 7,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Nature Meets Technology: The Role of AI in Environmental Restoration",
+            "description": "Examine how AI is aiding environmental restoration efforts, including mapping ecosystems, monitoring biodiversity, and optimizing resource allocation. Discuss challenges like funding and accuracy, and highlight examples of successful projects.",
+            "category_id": 7,
+            "target_word_count": 2500
+        },
+        {
+            "title": "Beyond Opioids: The Future of Pain Management for Post-Surgical Patients",
+            "description": "Explore innovative pain management techniques that move beyond opioid dependency. Highlight advancements like wearable devices, non-invasive therapies, and AI-driven recovery plans. Discuss the implications for patient care, safety, and recovery outcomes.",
+            "category_id": 7,
+            "target_word_count": 2500
+        },
+        {
+            "title": "California Dreamin No More: The Slow Collapse of the Golden State",
+            "description": "Analyze the social, economic, and environmental challenges facing California, including housing crises, wildfires, and water shortages. Reflect on its historical prosperity and discuss potential solutions to its current struggles. Include expert opinions and data-driven insights.",
+            "category_id": 8,
             "target_word_count": 2500
         }
     ]
-} 
+}
