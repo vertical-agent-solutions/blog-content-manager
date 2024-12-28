@@ -1,4 +1,4 @@
-# Content Agent
+# Content Generation with AI and Django
 
 A Django application that uses Google's Gemini AI model to generate blog content. This application allows you to manage topics, generate articles, and organize content by categories.
 
