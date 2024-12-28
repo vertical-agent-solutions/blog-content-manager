@@ -22,6 +22,7 @@ class AIService:
         - Use appropriate subheadings
         - Include a conclusion
         - Focus on providing clear and valuable insights
+        - Only return article content
         """
         
         response = self.model.generate_content(prompt)
