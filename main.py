@@ -18,7 +18,7 @@ from content_generator import ContentGenerator
 load_dotenv()
 
 # Configure AI model once
-THINKING_MODEL = "gemini-2.0-flash-thinking-exp-1219"
+THINKING_MODEL = "gemini-exp-1206"
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel(THINKING_MODEL)
 
