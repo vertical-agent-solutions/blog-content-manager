@@ -39,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'blog_generator.urls'
+ROOT_URLCONF = 'content_manager.urls'
 
 TEMPLATES = [
     {
@@ -57,7 +57,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'blog_generator.wsgi.application'
+WSGI_APPLICATION = 'content_manager.wsgi.application'
 
 # Database
 DATABASES = {

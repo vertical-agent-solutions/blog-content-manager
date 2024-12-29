@@ -85,7 +85,7 @@ The application will be available at http://127.0.0.1:8000/
 
 ```
 content-agent/
-├── blog_generator/          # Django project settings
+├── content_manager/          # Django project settings
 ├── core/                    # Main application
 │   ├── services/           # AI services
 │   │   └── ai_service.py   # Gemini AI integration
