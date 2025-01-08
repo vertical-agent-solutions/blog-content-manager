@@ -1,6 +1,6 @@
-# Content Management with AI
+# Blog Content Management with AI
 
-A Django application that uses Google's Gemini AI to generate blog content. This application allows you to manage topics, generate articles, and organize content by categories.
+A Django application that uses Google's Gemini AI to generate and manage blog content.
 
 ## Features
 
@@ -45,7 +45,7 @@ A Django application that uses Google's Gemini AI to generate blog content. This
 
 4. Install the required packages:
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirements.txt --user
    ```
 
 5. Run database migrations:

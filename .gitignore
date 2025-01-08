@@ -33,6 +33,7 @@ media
 env/
 venv/
 ENV/
+manager-env/
 
 # IDE
 .idea/
