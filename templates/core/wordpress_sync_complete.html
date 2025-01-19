@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-success">
+        <h4 class="alert-heading">Sync Complete!</h4>
+        <p>Successfully synchronized {{ post_count }} WordPress posts.</p>
+    </div>
+    <a href="{% url 'core:wordpress_posts' %}" class="btn btn-primary">View Posts</a>
+</div>
+{% endblock %} 

@@ -5,9 +5,11 @@ from django.http import HttpResponse
 import json
 from pathlib import Path
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views.generic import ListView
 
-from .models import Category, Topic, Article
+from .models import Category, Topic, Article, WordPressPost
 from .services.ai_service import AIService
+from .services.wordpress_service import WordPressService
 from .forms import TopicForm
 
 def home(request):
@@ -58,11 +60,19 @@ def topic_generate(request):
 
 def topic_save(request):
     if request.method == 'POST':
-        category_id = request.POST.get('category_id')
         selected_indices = request.POST.getlist('selected_topics')
         topics_data = json.loads(request.POST.get('topics_data'))
+        from_wordpress = request.POST.get('from_wordpress') == 'true'
         
-        category = get_object_or_404(Category, id=category_id)
+        # Get or create a default category for WordPress-generated topics
+        if from_wordpress:
+            category, _ = Category.objects.get_or_create(
+                name='WordPress Generated',
+                defaults={'description': 'Topics generated from WordPress posts'}
+            )
+        else:
+            category_id = request.POST.get('category_id')
+            category = get_object_or_404(Category, id=category_id)
         
         # Save only selected topics
         saved_count = 0
@@ -161,4 +171,60 @@ def seed_database(request):
             messages.error(request, f'Error seeding database: {str(e)}')
             return redirect('core:home')
             
-    return render(request, 'core/db/seed.html') 
+    return render(request, 'core/db/seed.html')
+
+class WordPressPostListView(ListView):
+    model = WordPressPost
+    template_name = 'core/wordpress_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'WordPress Posts'
+        return context
+
+def sync_wordpress_posts(request):
+    wp_service = WordPressService()
+    posts = wp_service.get_posts(per_page=100)  # Fetch up to 100 posts
+    
+    for post_data in posts:
+        WordPressPost.objects.update_or_create(
+            wp_id=post_data['id'],
+            defaults={
+                'title': post_data['title']['rendered'],
+                'excerpt': post_data['excerpt']['rendered'],
+                'wp_url': post_data['link'],
+                'published_date': post_data['date'],
+            }
+        )
+    
+    return render(request, 'core/wordpress_sync_complete.html', {
+        'post_count': len(posts)
+    })
+
+def generate_topics_from_wp(request):
+    if request.method == 'POST':
+        wp_service = WordPressService()
+        ai_service = AIService()
+        count = int(request.POST.get('count', 3))
+        
+        # Fetch recent WordPress posts
+        posts = wp_service.get_posts(per_page=5)  # Get 5 most recent posts
+        print(f"Fetched {len(posts)} WordPress posts")
+        
+        # Generate topics based on posts
+        topic_ideas = ai_service.generate_topics_from_posts(posts, count)
+        print(f"Generated {len(topic_ideas)} topic ideas")
+        print(f"Topic ideas: {json.dumps(topic_ideas, indent=2)}")
+        
+        # Prepare topics data for the template
+        topics_json = json.dumps(topic_ideas)
+        
+        return render(request, 'core/topics/review.html', {
+            'topics': topic_ideas,
+            'topics_json': topics_json,
+            'from_wordpress': True
+        })
+    
+    return render(request, 'core/topics/generate_from_wp.html') 

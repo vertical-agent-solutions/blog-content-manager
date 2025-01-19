@@ -1,37 +1,45 @@
 {% extends 'base.html' %}
+{% load django_bootstrap5 %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Topics</h1>
-    <div>
-        <a href="{% url 'core:topic_create' %}" class="btn btn-primary me-2">Create Topic</a>
-        <a href="{% url 'core:topic_generate' %}" class="btn btn-success">Generate Topics</a>
-    </div>
-</div>
-
-<div class="row">
-    {% for topic in topics %}
-    <div class="col-md-6 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">{{ topic.title }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ topic.category.name }}</h6>
-                <p class="card-text">{{ topic.description }}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="badge bg-{% if topic.status == 'draft' %}secondary{% elif topic.status == 'in_progress' %}warning{% else %}success{% endif %}">
-                        {{ topic.status|title }}
-                    </span>
-                    {% if topic.status == 'draft' %}
-                    <a href="{% url 'core:article_generate' topic.id %}" class="btn btn-primary btn-sm">Generate Article</a>
-                    {% endif %}
-                </div>
-            </div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Topics</h1>
+        <div class="btn-group">
+            <a href="{% url 'core:topic_create' %}" class="btn btn-primary">Create Topic</a>
+            <a href="{% url 'core:topic_generate' %}" class="btn btn-success">Generate Topics</a>
+            <a href="{% url 'core:generate_topics_from_wp' %}" class="btn btn-info">Generate from WordPress</a>
         </div>
     </div>
-    {% empty %}
-    <div class="col">
-        <p class="text-center">No topics found. Try creating one or generating some!</p>
-    </div>
-    {% endfor %}
+
+    {% if topics %}
+        <div class="row">
+            {% for topic in topics %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ topic.title }}</h5>
+                            <p class="card-text">{{ topic.description }}</p>
+                            <div class="mt-3">
+                                <span class="badge bg-primary">{{ topic.category.name }}</span>
+                                <span class="badge bg-secondary">{{ topic.status }}</span>
+                            </div>
+                        </div>
+                        {% if topic.status == 'draft' %}
+                        <div class="card-footer">
+                            <div class="d-grid">
+                                <a href="{% url 'core:article_generate' topic.id %}" class="btn btn-sm btn-outline-success">Generate Article</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No topics found. Create a new topic or generate some using AI.
+        </div>
+    {% endif %}
 </div>
 {% endblock %} 

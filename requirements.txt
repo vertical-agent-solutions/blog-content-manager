@@ -4,3 +4,4 @@ google-generativeai
 django-bootstrap5
 whitenoise
 markdown2
+requests==2.31.0  # For WordPress API calls

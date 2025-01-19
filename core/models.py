@@ -55,4 +55,19 @@ class Article(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.title 
+        return self.title
+
+class WordPressPost(models.Model):
+    wp_id = models.IntegerField(unique=True)
+    title = models.CharField(max_length=200)
+    excerpt = models.TextField()
+    content = models.TextField()
+    wp_url = models.URLField()
+    published_date = models.DateTimeField()
+    last_synced = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-published_date'] 

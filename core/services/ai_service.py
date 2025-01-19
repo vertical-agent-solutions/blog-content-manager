@@ -7,7 +7,7 @@ from django.conf import settings
 class AIService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel("gemini-2.0-flash-exp")
+        self.model = genai.GenerativeModel('gemini-pro')
 
     def generate_article(self, topic: Dict) -> str:
         """Generate article content for a given topic."""
@@ -29,31 +29,70 @@ class AIService:
         return response.text
 
     def generate_topic_ideas(self, category_name: str, count: int = 3) -> List[Dict]:
-        """Generate topic ideas for a given category."""
-        prompt = f"""
-        Generate {count} blog topic ideas for the category: {category_name}
+        prompt = f"""Generate {count} blog topic ideas for the category '{category_name}'.
+        For each topic, provide:
+        1. An engaging title
+        2. A brief description (2-3 sentences)
         
-        For each topic provide:
-        - Title
-        - Brief description (2-3 sentences)
-        
-        Return the response in this exact JSON format:
-        [
-            {{
-                "title": "Topic Title",
-                "description": "Brief description"
-            }},
-            {{
-                "title": "Another Topic",
-                "description": "Another description"
-            }}
-        ]
-
-        Ensure the response is valid JSON and includes exactly {count} topics.
-        """
+        Format the response as a JSON array with 'title' and 'description' fields."""
         
         response = self.model.generate_content(prompt)
-        return self._parse_topic_ideas(response.text)
+        try:
+            return json.loads(response.text)
+        except json.JSONDecodeError:
+            return []
+
+    def generate_topics_from_posts(self, posts: List[Dict], count: int = 3) -> List[Dict]:
+        """
+        Generate new topic ideas based on existing WordPress posts
+        
+        Args:
+            posts (List[Dict]): List of WordPress posts
+            count (int): Number of topics to generate
+            
+        Returns:
+            List[Dict]: List of generated topics
+        """
+        # Create a summary of existing posts
+        post_summaries = "\n".join([
+            f"- {post['title']['rendered']}: {post['excerpt']['rendered']}"
+            for post in posts[:5]  # Use up to 5 posts for context
+        ])
+        
+        prompt = f"""Based on these existing blog posts:
+
+{post_summaries}
+
+Generate {count} new blog topic ideas that would complement the existing content.
+Each topic must have:
+1. A clear, engaging title
+2. A 2-3 sentence description explaining the topic
+
+Return the response in this exact JSON format:
+[
+    {{
+        "title": "Topic Title",
+        "description": "Topic description here"
+    }},
+    ...
+]
+
+Make sure:
+1. The topics are related but not duplicates of existing content
+2. Fill gaps in the current content
+3. Provide fresh perspectives or deeper dives
+4. The response is valid JSON with exactly {count} topics
+5. Each topic has both title and description fields"""
+        
+        response = self.model.generate_content(prompt)
+        try:
+            topics = self._parse_topic_ideas(response.text)
+            if not topics:  # If parsing failed, try direct JSON parsing
+                topics = json.loads(response.text)
+            return topics
+        except json.JSONDecodeError:
+            print(f"Error parsing response: {response.text}")
+            return []
 
     def _parse_topic_ideas(self, text: str) -> List[Dict]:
         """Parse the generated topic ideas from JSON format."""

@@ -1,36 +1,64 @@
 {% extends 'base.html' %}
+{% load django_bootstrap5 %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 offset-md-3 text-center">
-        <h1 class="mb-4">Content Manager</h1>
-        
-        <div class="row mb-4">
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Topics</h5>
-                        <p class="card-text display-4">{{ topics_count }}</p>
-                        <a href="{% url 'core:topic_list' %}" class="btn btn-primary">View Topics</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Articles</h5>
-                        <p class="card-text display-4">{{ articles_count }}</p>
-                        <a href="{% url 'core:article_list' %}" class="btn btn-primary">View Articles</a>
+<div class="container mt-4">
+    <h1>Welcome to your Content Manager</h1>
+    <p class="lead">Manage your blog content with AI assistance</p>
+
+    <div class="row mt-4">
+        <!-- Topics Management -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Topics</h5>
+                    <p class="card-text">Manage and generate blog topics</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'core:topic_list' %}" class="btn btn-primary">View Topics ({{ topics_count }})</a>
+                        <a href="{% url 'core:topic_generate' %}" class="btn btn-success">Generate New Topics</a>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="row">
-            <div class="col">
-                <h3>Database Management</h3>
-                <a href="{% url 'core:reset_database' %}" class="btn btn-danger me-2">Reset Database</a>
-                <a href="{% url 'core:seed_database' %}" class="btn btn-warning">Seed Database</a>
+
+        <!-- Articles Management -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Articles</h5>
+                    <p class="card-text">View and manage generated articles</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'core:article_list' %}" class="btn btn-primary">View Articles ({{ articles_count }})</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WordPress Integration -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">WordPress Integration</h5>
+                    <p class="card-text">Manage and analyze your WordPress content</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'core:wordpress_posts' %}" class="btn btn-info">View WordPress Posts</a>
+                        <a href="{% url 'core:generate_topics_from_wp' %}" class="btn btn-success">Generate Topics from Posts</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Management -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Database Management</h5>
+                    <p class="card-text">Manage your local database</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'core:seed_database' %}" class="btn btn-warning">Seed Database</a>
+                        <a href="{% url 'core:reset_database' %}" class="btn btn-danger">Reset Database</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

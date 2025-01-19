@@ -2,40 +2,42 @@
 {% load django_bootstrap5 %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-10 offset-md-1">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Review Generated Topics</h1>
-            <a href="{% url 'core:topic_generate' %}" class="btn btn-outline-primary">Generate More</a>
+<div class="container mt-4">
+    <h1>Review Generated Topics</h1>
+    <p class="lead">Select the topics you want to save.</p>
+
+    <form method="post" action="{% url 'core:topic_save' %}">
+        {% csrf_token %}
+        {% if not from_wordpress %}
+            <input type="hidden" name="category_id" value="{{ category.id }}">
+        {% endif %}
+        <input type="hidden" name="from_wordpress" value="{{ from_wordpress|yesno:'true,false' }}">
+        <input type="hidden" name="topics_data" value="{{ topics_json }}">
+
+        <div class="row">
+            {% for topic in topics %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="selected_topics" value="{{ forloop.counter0 }}" id="topic{{ forloop.counter }}" checked>
+                                <label class="form-check-label" for="topic{{ forloop.counter }}">
+                                    <h5 class="card-title">{{ topic.title }}</h5>
+                                </label>
+                            </div>
+                            <p class="card-text">{{ topic.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
 
-        <form method="post" action="{% url 'core:topic_save' %}">
-            {% csrf_token %}
-            <input type="hidden" name="category_id" value="{{ category.id }}">
-            
-            {% for topic in topics %}
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="selected_topics" 
-                               value="{{ forloop.counter0 }}" id="topic{{ forloop.counter }}">
-                        <label class="form-check-label" for="topic{{ forloop.counter }}">
-                            <h5 class="card-title mb-1">{{ topic.title }}</h5>
-                        </label>
-                    </div>
-                    <p class="card-text text-muted ps-4">{{ topic.description }}</p>
-                </div>
-            </div>
-            {% endfor %}
-
-            <div class="d-flex justify-content-between align-items-center">
-                <span class="text-muted">Select topics to save</span>
-                <button type="submit" class="btn btn-success">Save Selected Topics</button>
-            </div>
-
-            <!-- Store topics data as JSON for the save view -->
-            <input type="hidden" name="topics_data" value="{{ topics_json }}">
-        </form>
-    </div>
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="{% if from_wordpress %}{% url 'core:generate_topics_from_wp' %}{% else %}{% url 'core:topic_generate' %}{% endif %}" class="btn btn-outline-secondary">
+                Back
+            </a>
+            <button type="submit" class="btn btn-primary">Save Selected Topics</button>
+        </div>
+    </form>
 </div>
 {% endblock %} 

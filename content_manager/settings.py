@@ -101,3 +101,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Gemini API Key
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY') 
+
+# WordPress API URL
+WORDPRESS_API_URL = os.getenv('WORDPRESS_API_URL') 
