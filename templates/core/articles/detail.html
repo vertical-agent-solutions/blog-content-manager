@@ -1,60 +1,49 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
-{% load markdown_extras %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8 offset-md-2">
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'core:article_list' %}">Articles</a></li>
-                <li class="breadcrumb-item active">{{ article.title }}</li>
-            </ol>
-        </nav>
+<div class="container mt-4">
+    <div class="mb-4">
+        <h1>{{ article.title }}</h1>
+        <div class="text-muted">
+            <small>Created: {{ article.created_at|date }}</small>
+            {% if article.updated_at != article.created_at %}
+                <small class="ms-2">Updated: {{ article.updated_at|date }}</small>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <span class="badge bg-primary">{{ article.topic.category.name }}</span>
+        </div>
+    </div>
 
-        <article>
-            <h1 class="mb-3">{{ article.title }}</h1>
-            <div class="text-muted mb-4">
-                <small>
-                    Category: {{ article.topic.category.name }} |
-                    Generated: {{ article.created_at|date:"M d, Y" }}
-                </small>
-            </div>
-            
-            <div class="article-content markdown-body">
-                {{ article.content|markdown|safe }}
-            </div>
-        </article>
+    <div class="card">
+        <div class="card-body article-content">
+            {{ article.content|safe }}
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'core:article_list' %}" class="btn btn-outline-secondary">Back to Articles</a>
     </div>
 </div>
-{% endblock %}
 
 {% block extra_css %}
 <style>
-    .markdown-body {
-        font-size: 1.1rem;
-        line-height: 1.7;
-    }
-    .markdown-body h1,
-    .markdown-body h2,
-    .markdown-body h3 {
-        margin-top: 1.5rem;
-        margin-bottom: 1rem;
-        color: #2c3e50;
-    }
-    .markdown-body p {
-        margin-bottom: 1.2rem;
-    }
-    .markdown-body ul,
-    .markdown-body ol {
-        margin-bottom: 1.2rem;
-        padding-left: 2rem;
-    }
-    .markdown-body blockquote {
-        border-left: 4px solid #e9ecef;
-        padding-left: 1rem;
-        color: #6c757d;
-        margin: 1.5rem 0;
-    }
+.article-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.article-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.75rem;
+}
+
+.article-content p {
+    margin-bottom: 1.2rem;
+}
 </style>
+{% endblock %}
 {% endblock %} 
