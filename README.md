@@ -16,14 +16,19 @@ A Django application that uses Google's Gemini AI to generate and manage blog co
     - Duplicate category prevention
 
 - Content Generation
-  - Generate full articles from topics
-  - Markdown formatting support
-  - AI-powered content generation using Gemini
+  - Generate full articles from topics using Gemini
+  - Clean, structured HTML output
+  - Professional formatting with headings and paragraphs
+  - Easy content copying:
+    - Copy as plain text
+    - Copy as HTML
+    - One-click clipboard integration
 
 - WordPress Integration
   - Sync and view WordPress posts
   - Use existing posts for content analysis
   - Generate new topic ideas based on published content
+  - Track WordPress post synchronization
 
 - Database Management
   - Reset database
@@ -54,7 +59,7 @@ A Django application that uses Google's Gemini AI to generate and manage blog co
    # On Windows
    .\venv\Scripts\activate
    # On Unix or MacOS
-   source venv/Scripts/activate
+   source venv/bin/activate
    ```
 
 4. Install the required packages:
@@ -107,7 +112,9 @@ The application will be available at http://127.0.0.1:8000/
 4. Generating Articles
    - Select a draft topic
    - Click "Generate Article"
-   - Article is saved with markdown formatting
+   - Review the generated content
+   - Copy content as plain text or HTML
+   - Articles are formatted with clean HTML structure
 
 ## Project Structure
 
@@ -135,7 +142,7 @@ blog-content-manager/
 - SQLite database for local development
 - Google's Gemini AI for content generation
 - WordPress REST API integration
-- Markdown support for article formatting
+- Clean HTML output for articles
 
 ## License
 
