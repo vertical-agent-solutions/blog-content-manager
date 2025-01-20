@@ -9,10 +9,16 @@ A Django application that uses Google's Gemini AI to generate and manage blog co
   - Generate AI-powered topic suggestions
   - Generate topics based on existing WordPress posts
   - Review and select topics before saving
+  - Dynamic category management:
+    - Select from existing categories
+    - Create new categories on the fly
+    - Optional category descriptions
+    - Duplicate category prevention
 
 - Content Generation
-  - Generate full articles from topics using Gemini
+  - Generate full articles from topics
   - Markdown formatting support
+  - AI-powered content generation using Gemini
 
 - WordPress Integration
   - Sync and view WordPress posts
@@ -78,7 +84,10 @@ The application will be available at http://127.0.0.1:8000/
 
 2. Managing Topics
    - View all topics in the Topics section
-   - Create topics manually using the form
+   - Create topics manually:
+     - Enter topic title and description
+     - Either select an existing category or create a new one
+     - New categories can include optional descriptions
    - Generate topic ideas using AI:
      - Select a category
      - Choose number of topics to generate

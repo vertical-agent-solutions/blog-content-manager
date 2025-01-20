@@ -2,18 +2,138 @@
 {% load django_bootstrap5 %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <h1 class="mb-4">Create New Topic</h1>
-        
-        <form method="post">
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Create Topic</button>
-            </div>
-        </form>
+<div class="container mt-4">
+    <h1>Create New Topic</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                {# Topic Title #}
+                <div class="mb-3">
+                    <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="alert alert-danger mt-2">{{ form.title.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Topic Description #}
+                <div class="mb-3">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="alert alert-danger mt-2">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Category Selection #}
+                <div class="mb-4">
+                    <label class="form-label">Category</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="existing-category mb-3">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="category_choice" id="existing_category" value="existing" checked>
+                                    <label class="form-check-label" for="existing_category">
+                                        Select Existing Category
+                                    </label>
+                                </div>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.category.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="new-category">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="category_choice" id="new_category" value="new">
+                                    <label class="form-check-label" for="new_category">
+                                        Create New Category
+                                    </label>
+                                </div>
+                                {{ form.new_category }}
+                                {% if form.new_category.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.new_category.errors }}</div>
+                                {% endif %}
+                                <div class="mt-2">
+                                    {{ form.new_category_description }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mt-2">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Create Topic</button>
+                    <a href="{% url 'core:topic_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.querySelector('[name="category"]');
+    const newCategoryInput = document.querySelector('[name="new_category"]');
+    const newCategoryDesc = document.querySelector('[name="new_category_description"]');
+    const existingRadio = document.getElementById('existing_category');
+    const newRadio = document.getElementById('new_category');
+
+    function toggleFields(useExisting) {
+        // Enable/disable fields
+        categorySelect.disabled = !useExisting;
+        newCategoryInput.disabled = useExisting;
+        newCategoryDesc.disabled = useExisting;
+
+        // Clear values
+        if (useExisting) {
+            newCategoryInput.value = '';
+            newCategoryDesc.value = '';
+        } else {
+            categorySelect.value = '';
+        }
+
+        // Update visual feedback
+        categorySelect.style.opacity = useExisting ? '1' : '0.5';
+        newCategoryInput.style.opacity = useExisting ? '0.5' : '1';
+        newCategoryDesc.style.opacity = useExisting ? '0.5' : '1';
+    }
+
+    // Initial state
+    toggleFields(true);
+
+    // Event listeners for radio buttons
+    existingRadio.addEventListener('change', function() {
+        if (this.checked) toggleFields(true);
+    });
+
+    newRadio.addEventListener('change', function() {
+        if (this.checked) toggleFields(false);
+    });
+
+    // Event listeners for fields to auto-select appropriate radio
+    categorySelect.addEventListener('change', function() {
+        if (this.value) {
+            existingRadio.checked = true;
+            toggleFields(true);
+        }
+    });
+
+    newCategoryInput.addEventListener('input', function() {
+        if (this.value) {
+            newRadio.checked = true;
+            toggleFields(false);
+        }
+    });
+});
+</script>
+{% endblock %}
 {% endblock %} 
