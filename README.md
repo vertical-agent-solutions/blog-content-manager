@@ -17,6 +17,12 @@ A Django application that uses Google's Gemini AI to generate and manage blog co
 
 - Content Generation
   - Generate full articles from topics using Gemini
+  - Customizable generation parameters:
+    - Purpose definition
+    - Target audience specification
+    - Tone of voice selection
+    - Word count control
+    - Save and reuse parameter sets
   - Clean, structured HTML output
   - Professional formatting with headings and paragraphs
   - Easy content copying:
@@ -112,6 +118,12 @@ The application will be available at http://127.0.0.1:8000/
 4. Generating Articles
    - Select a draft topic
    - Click "Generate Article"
+   - Customize generation parameters:
+     - Define the article's purpose
+     - Specify target audience
+     - Set tone of voice
+     - Adjust word count
+     - Optionally save parameters for reuse
    - Review the generated content
    - Copy content as plain text or HTML
    - Articles are formatted with clean HTML structure
@@ -126,10 +138,14 @@ blog-content-manager/
 │   │   ├── ai_service.py    # Gemini AI integration
 │   │   └── wordpress_service.py  # WordPress API integration
 │   ├── models.py            # Database models
+│   ├── forms.py             # Form definitions
 │   └── views.py             # View logic
 ├── templates/               # HTML templates
-│   ├── base.html           # Base template
 │   └── core/               # Core app templates
+│       ├── base.html       # Base template with navigation
+│       ├── articles/       # Article-related templates
+│       ├── topics/         # Topic-related templates
+│       └── db/             # Database management templates
 ├── manage.py
 ├── requirements.txt
 └── topics.json             # Seed data
@@ -139,10 +155,21 @@ blog-content-manager/
 
 - Built with Django 5.0
 - Uses Bootstrap 5 for UI
+  - django-bootstrap5 for form rendering
+  - Responsive design
+  - Modern UI components
 - SQLite database for local development
 - Google's Gemini AI for content generation
 - WordPress REST API integration
 - Clean HTML output for articles
+
+## Models
+
+- Category: Organizes topics by subject area
+- Topic: Represents blog post ideas with status tracking
+- Article: Stores generated content with metadata
+- ArticleParameters: Saves reusable generation settings
+- WordPressPost: Tracks synchronized WordPress content
 
 ## License
 

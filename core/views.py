@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import json
 from pathlib import Path
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.generic import ListView
+from django.template.loader import render_to_string
 
-from .models import Category, Topic, Article, WordPressPost
+from .models import Category, Topic, Article, WordPressPost, ArticleParameters
 from .services.ai_service import AIService
 from .services.wordpress_service import WordPressService
-from .forms import TopicForm
+from .forms import TopicForm, ArticleGenerationForm
 
 def home(request):
     topics_count = Topic.objects.count()
@@ -102,22 +103,57 @@ def article_generate(request, topic_id):
     topic = get_object_or_404(Topic, id=topic_id)
     
     if request.method == 'POST':
-        ai_service = AIService()
-        content = ai_service.generate_article(topic)
-        
-        article = Article.objects.create(
-            topic=topic,
-            title=topic.title,
-            content=content
-        )
-        
-        topic.status = 'published'
-        topic.save()
-        
-        messages.success(request, 'Article generated successfully!')
-        return redirect('core:article_detail', slug=article.slug)
+        form = ArticleGenerationForm(request.POST)
+        if form.is_valid():
+            ai_service = AIService()
+            
+            # Get parameters from form
+            if form.cleaned_data['parameters']:
+                # Use selected saved parameters
+                parameters = form.cleaned_data['parameters']
+            else:
+                # Use custom parameters
+                parameters = {
+                    'purpose': form.cleaned_data['purpose'],
+                    'target_audience': form.cleaned_data['target_audience'],
+                    'tone_of_voice': form.cleaned_data['tone_of_voice'],
+                    'word_count': form.cleaned_data['word_count']
+                }
+            
+            # Save parameters if requested
+            if form.cleaned_data['save_as_default']:
+                ArticleParameters.objects.create(
+                    name=form.cleaned_data['parameter_name'],
+                    purpose=parameters['purpose'] if isinstance(parameters, dict) else parameters.purpose,
+                    target_audience=parameters['target_audience'] if isinstance(parameters, dict) else parameters.target_audience,
+                    tone_of_voice=parameters['tone_of_voice'] if isinstance(parameters, dict) else parameters.tone_of_voice,
+                    word_count=parameters['word_count'] if isinstance(parameters, dict) else parameters.word_count,
+                    is_default=True
+                )
+            
+            # Generate article
+            content = ai_service.generate_article(topic, parameters)
+            
+            # Create article
+            article = Article.objects.create(
+                topic=topic,
+                title=topic.title,
+                content=content
+            )
+            
+            # Update topic status
+            topic.status = 'published'
+            topic.save()
+            
+            messages.success(request, 'Article generated successfully!')
+            return redirect('core:article_detail', slug=article.slug)
+    else:
+        form = ArticleGenerationForm()
     
-    return render(request, 'core/articles/generate.html', {'topic': topic})
+    return render(request, 'core/articles/generate.html', {
+        'topic': topic,
+        'form': form
+    })
 
 def article_detail(request, slug):
     article = get_object_or_404(Article.objects.select_related('topic'), slug=slug)

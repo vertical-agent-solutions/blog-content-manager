@@ -1,5 +1,5 @@
 from django import forms
-from .models import Topic, Category
+from .models import Topic, Category, ArticleParameters
 
 class TopicForm(forms.ModelForm):
     # Make category field not required
@@ -78,3 +78,65 @@ class TopicForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance 
+
+class ArticleGenerationForm(forms.Form):
+    parameters = forms.ModelChoiceField(
+        queryset=ArticleParameters.objects.all(),
+        required=False,
+        empty_label="Custom parameters",
+        widget=forms.Select(attrs={'class': 'form-select', 'data-parameters-select': True})
+    )
+    
+    purpose = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        required=False,
+        help_text="What is the main purpose of this article?"
+    )
+    
+    target_audience = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        required=False,
+        help_text="Who is the target audience for this article?"
+    )
+    
+    tone_of_voice = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        required=False,
+        help_text="What tone of voice should be used? (e.g., professional, casual, academic)"
+    )
+    
+    word_count = forms.IntegerField(
+        initial=500,
+        min_value=100,
+        max_value=5000,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        help_text="How many words should the article be?"
+    )
+    
+    save_as_default = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'data-save-toggle': True})
+    )
+    
+    parameter_name = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        help_text="Give these parameters a name to save them for future use"
+    )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        parameters = cleaned_data.get('parameters')
+        save_as_default = cleaned_data.get('save_as_default')
+        
+        if not parameters:
+            # If not using saved parameters, require the custom fields
+            required_fields = ['purpose', 'target_audience', 'tone_of_voice', 'word_count']
+            for field in required_fields:
+                if not cleaned_data.get(field):
+                    self.add_error(field, 'This field is required when not using saved parameters.')
+        
+        if save_as_default and not cleaned_data.get('parameter_name'):
+            self.add_error('parameter_name', 'Parameter name is required when saving as default.')
+        
+        return cleaned_data 

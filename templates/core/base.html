@@ -4,14 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Content Manager{% endblock %}</title>
+    <title>{% block title %}Blog Content Manager{% endblock %}</title>
     {% bootstrap_css %}
-    {% bootstrap_javascript %}
+    
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'core:home' %}">Content Manager</a>
+            <a class="navbar-brand" href="{% url 'core:home' %}">Blog Manager</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -31,11 +41,13 @@
         </div>
     </nav>
 
-    <div class="container">
+    <main class="container">
         {% bootstrap_messages %}
-        
         {% block content %}
         {% endblock %}
-    </div>
+    </main>
+
+    {% bootstrap_javascript %}
+    {% block extra_js %}{% endblock %}
 </body>
 </html> 

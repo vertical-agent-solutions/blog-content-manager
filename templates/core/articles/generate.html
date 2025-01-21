@@ -1,22 +1,166 @@
-{% extends 'base.html' %}
+{% extends 'core/base.html' %}
+{% load django_bootstrap5 %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8 offset-md-2">
-        <h1 class="mb-4">Generate Article</h1>
-        
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Topic Details</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ topic.category.name }}</h6>
-                <p class="card-text">{{ topic.description }}</p>
-            </div>
+<div class="container mt-4">
+    <h1>Generate Article</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {# Topic Information Section #}
+                <div class="mb-4">
+                    <h5 class="card-title mb-3">Topic Information</h5>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Title</label>
+                                <div class="form-control-plaintext">{{ topic.title }}</div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Description</label>
+                                <div class="form-control-plaintext">{{ topic.description }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Category</label>
+                                <div>
+                                    <span class="badge bg-primary">{{ topic.category.name }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                {# Generation Parameters Section #}
+                <div class="mb-4">
+                    <h5 class="card-title mb-3">Generation Parameters</h5>
+                    
+                    {# Saved Parameters Selection #}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Use Saved Parameters</label>
+                        {{ form.parameters }}
+                        <div class="form-text">Select a saved parameter set or customize below</div>
+                    </div>
+
+                    <div id="customParameters">
+                        <div class="row">
+                            {# Purpose #}
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.purpose.id_for_label }}" class="form-label fw-bold">Purpose</label>
+                                {{ form.purpose }}
+                                <div class="form-text">{{ form.purpose.help_text }}</div>
+                                {% if form.purpose.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.purpose.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            {# Target Audience #}
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.target_audience.id_for_label }}" class="form-label fw-bold">Target Audience</label>
+                                {{ form.target_audience }}
+                                <div class="form-text">{{ form.target_audience.help_text }}</div>
+                                {% if form.target_audience.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.target_audience.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {# Tone of Voice #}
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.tone_of_voice.id_for_label }}" class="form-label fw-bold">Tone of Voice</label>
+                                {{ form.tone_of_voice }}
+                                <div class="form-text">{{ form.tone_of_voice.help_text }}</div>
+                                {% if form.tone_of_voice.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.tone_of_voice.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            {# Word Count #}
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.word_count.id_for_label }}" class="form-label fw-bold">Word Count</label>
+                                {{ form.word_count }}
+                                <div class="form-text">{{ form.word_count.help_text }}</div>
+                                {% if form.word_count.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.word_count.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# Save Parameters Section #}
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <div class="form-check mb-2">
+                                {{ form.save_as_default }}
+                                <label class="form-check-label" for="{{ form.save_as_default.id_for_label }}">
+                                    Save these parameters for future use
+                                </label>
+                            </div>
+
+                            <div id="parameterNameField" style="display: none;">
+                                <label for="{{ form.parameter_name.id_for_label }}" class="form-label">Parameter Name</label>
+                                {{ form.parameter_name }}
+                                <div class="form-text">{{ form.parameter_name.help_text }}</div>
+                                {% if form.parameter_name.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.parameter_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger mb-4">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">Generate Article</button>
+                    <a href="{% url 'core:topic_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
         </div>
-        
-        <form method="post" class="d-grid">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary btn-lg">Generate Article</button>
-        </form>
     </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const parametersSelect = document.querySelector('[data-parameters-select]');
+    const customParamsDiv = document.getElementById('customParameters');
+    const saveDefaultCheck = document.querySelector('[data-save-toggle]');
+    const parameterNameField = document.getElementById('parameterNameField');
+
+    function toggleCustomParameters() {
+        const usingSavedParams = parametersSelect.value !== '';
+        const fields = customParamsDiv.querySelectorAll('input, textarea, select');
+        
+        fields.forEach(field => {
+            if (!field.hasAttribute('data-save-toggle') && field.name !== 'parameter_name') {
+                field.disabled = usingSavedParams;
+            }
+        });
+        
+        customParamsDiv.style.opacity = usingSavedParams ? '0.5' : '1';
+    }
+
+    function toggleParameterName() {
+        parameterNameField.style.display = saveDefaultCheck.checked ? 'block' : 'none';
+    }
+
+    parametersSelect.addEventListener('change', toggleCustomParameters);
+    saveDefaultCheck.addEventListener('change', toggleParameterName);
+
+    // Initial state
+    toggleCustomParameters();
+    toggleParameterName();
+});
+</script>
+{% endblock %}
 {% endblock %} 

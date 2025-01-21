@@ -9,32 +9,71 @@ class AIService:
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
 
-    def generate_article(self, topic) -> str:
-        """Generate article content for a given topic."""
+    def generate_article(self, topic, parameters=None) -> str:
+        """
+        Generate article content for a given topic using specified parameters.
+        
+        Args:
+            topic: The Topic object
+            parameters: Either an ArticleParameters object or a dict with custom parameters
+        """
+        # Set default parameters if none provided
+        if parameters is None:
+            # Try to get default parameters from database
+            from ..models import ArticleParameters
+            parameters = ArticleParameters.objects.filter(is_default=True).first()
+            
+            if parameters is None:
+                # Use hardcoded defaults if no defaults in database
+                parameters = {
+                    'purpose': 'To inform and educate readers',
+                    'target_audience': 'General audience interested in this topic',
+                    'tone_of_voice': 'professional',
+                    'word_count': 1500
+                }
+
+        # If parameters is a dict, use it directly; otherwise extract from model
+        if not isinstance(parameters, dict):
+            parameters = {
+                'purpose': parameters.purpose,
+                'target_audience': parameters.target_audience,
+                'tone_of_voice': parameters.tone_of_voice,
+                'word_count': parameters.word_count
+            }
+
         prompt = f"""Write a comprehensive article about: {topic.title}
-            Context: {topic.description}
-            Category: {topic.category.name}
 
-            Requirements:
-            1. Structure:
-            - Start with an engaging introduction
-            - Include 3-4 main sections with clear subheadings
-            - End with a strong conclusion
+Context and Requirements:
+1. Topic Information:
+   - Title: {topic.title}
+   - Description: {topic.description}
+   - Category: {topic.category.name}
 
-            2. Content Guidelines:
-            - Write in a clear, professional tone
-            - Include specific examples and explanations
-            - Target length: around 1500 words
-            - Make it engaging and informative
-            - Use simple HTML tags for structure (<h2> for headings, <p> for paragraphs)
+2. Article Parameters:
+   - Purpose: {parameters['purpose']}
+   - Target Audience: {parameters['target_audience']}
+   - Tone of Voice: {parameters['tone_of_voice']}
+   - Target Length: {parameters['word_count']} words
 
-            3. Format:
-            - Use <h2> tags for main section headings
-            - Use <p> tags for paragraphs
-            - Keep formatting minimal and clean
-            - No complex HTML or styling
+3. Structure:
+   - Start with an engaging introduction that hooks the {parameters['target_audience']}
+   - Include 3-4 main sections with clear subheadings
+   - End with a strong conclusion that reinforces the {parameters['purpose']}
 
-            Write the complete article now, using only basic HTML tags (<h2> and <p>)."""
+4. Content Guidelines:
+   - Write in a {parameters['tone_of_voice']} tone
+   - Include specific examples and explanations suitable for the target audience
+   - Make it engaging and informative
+   - Focus on achieving the stated purpose
+   - Use simple HTML tags for structure (<h2> for headings, <p> for paragraphs)
+
+5. Format:
+   - Use <h2> tags for main section headings
+   - Use <p> tags for paragraphs
+   - Keep formatting minimal and clean
+   - No complex HTML or styling
+
+Write the complete article now, using only basic HTML tags (<h2> and <p>)."""
         
         response = self.model.generate_content(prompt)
         return response.text
