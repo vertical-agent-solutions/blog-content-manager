@@ -7,35 +7,34 @@ from django.conf import settings
 class AIService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-pro')
+        self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
 
     def generate_article(self, topic) -> str:
         """Generate article content for a given topic."""
         prompt = f"""Write a comprehensive article about: {topic.title}
+            Context: {topic.description}
+            Category: {topic.category.name}
 
-Context: {topic.description}
-Category: {topic.category.name}
+            Requirements:
+            1. Structure:
+            - Start with an engaging introduction
+            - Include 3-4 main sections with clear subheadings
+            - End with a strong conclusion
 
-Requirements:
-1. Structure:
-   - Start with an engaging introduction
-   - Include 3-4 main sections with clear subheadings
-   - End with a strong conclusion
+            2. Content Guidelines:
+            - Write in a clear, professional tone
+            - Include specific examples and explanations
+            - Target length: around 1500 words
+            - Make it engaging and informative
+            - Use simple HTML tags for structure (<h2> for headings, <p> for paragraphs)
 
-2. Content Guidelines:
-   - Write in a clear, professional tone
-   - Include specific examples and explanations
-   - Target length: around 1500 words
-   - Make it engaging and informative
-   - Use simple HTML tags for structure (<h2> for headings, <p> for paragraphs)
+            3. Format:
+            - Use <h2> tags for main section headings
+            - Use <p> tags for paragraphs
+            - Keep formatting minimal and clean
+            - No complex HTML or styling
 
-3. Format:
-   - Use <h2> tags for main section headings
-   - Use <p> tags for paragraphs
-   - Keep formatting minimal and clean
-   - No complex HTML or styling
-
-Write the complete article now, using only basic HTML tags (<h2> and <p>)."""
+            Write the complete article now, using only basic HTML tags (<h2> and <p>)."""
         
         response = self.model.generate_content(prompt)
         return response.text
