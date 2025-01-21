@@ -1,5 +1,6 @@
 from django import forms
 from .models import Topic, Category, ArticleParameters
+import json
 
 class TopicForm(forms.ModelForm):
     # Make category field not required
@@ -84,7 +85,10 @@ class ArticleGenerationForm(forms.Form):
         queryset=ArticleParameters.objects.all(),
         required=False,
         empty_label="Custom parameters",
-        widget=forms.Select(attrs={'class': 'form-select', 'data-parameters-select': True})
+        widget=forms.Select(attrs={
+            'class': 'form-select', 
+            'data-parameters-select': True
+        })
     )
     
     purpose = forms.CharField(
@@ -124,12 +128,41 @@ class ArticleGenerationForm(forms.Form):
         help_text="Give these parameters a name to save them for future use"
     )
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Create a custom Select widget with data attributes
+        widget = self.fields['parameters'].widget
+        widget.choices = [('', self.fields['parameters'].empty_label)]
+        
+        for param in ArticleParameters.objects.all():
+            param_data = {
+                'purpose': param.purpose,
+                'target_audience': param.target_audience,
+                'tone_of_voice': str(param.tone_of_voice),
+                'word_count': param.word_count
+            }
+            # Add the option with its data attribute
+            widget.choices.append((param.id, param.name))
+            # Add the data attribute to the widget's attrs for this specific option
+            widget.attrs[f'data-parameters-{param.id}'] = json.dumps(param_data)
+    
     def clean(self):
         cleaned_data = super().clean()
         parameters = cleaned_data.get('parameters')
         save_as_default = cleaned_data.get('save_as_default')
         
-        if not parameters:
+        # If using saved parameters, skip validation of custom fields
+        if parameters:
+            # Remove any validation errors for the custom fields
+            for field in ['purpose', 'target_audience', 'tone_of_voice', 'word_count']:
+                if field in self._errors:
+                    del self._errors[field]
+            # Set the values from the saved parameters
+            cleaned_data['purpose'] = parameters.purpose
+            cleaned_data['target_audience'] = parameters.target_audience
+            cleaned_data['tone_of_voice'] = str(parameters.tone_of_voice)
+            cleaned_data['word_count'] = parameters.word_count
+        else:
             # If not using saved parameters, require the custom fields
             required_fields = ['purpose', 'target_audience', 'tone_of_voice', 'word_count']
             for field in required_fields:

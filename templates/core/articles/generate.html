@@ -137,28 +137,53 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveDefaultCheck = document.querySelector('[data-save-toggle]');
     const parameterNameField = document.getElementById('parameterNameField');
 
-    function toggleCustomParameters() {
-        const usingSavedParams = parametersSelect.value !== '';
+    // Store the initial values of all fields
+    const initialValues = {};
+    customParamsDiv.querySelectorAll('input, textarea, select').forEach(field => {
+        if (!field.hasAttribute('data-save-toggle') && field.name !== 'parameter_name') {
+            initialValues[field.name] = field.value;
+        }
+    });
+
+    function updateParameterFields(selectedValue) {
         const fields = customParamsDiv.querySelectorAll('input, textarea, select');
         
-        fields.forEach(field => {
-            if (!field.hasAttribute('data-save-toggle') && field.name !== 'parameter_name') {
-                field.disabled = usingSavedParams;
-            }
-        });
-        
-        customParamsDiv.style.opacity = usingSavedParams ? '0.5' : '1';
+        if (selectedValue) {
+            const parameters = JSON.parse(parametersSelect.getAttribute(`data-parameters-${selectedValue}`));
+            
+            fields.forEach(field => {
+                if (!field.hasAttribute('data-save-toggle') && field.name !== 'parameter_name') {
+                    if (parameters[field.name] !== undefined) {
+                        field.value = parameters[field.name];
+                    }
+                    field.disabled = true;
+                }
+            });
+            
+            customParamsDiv.style.opacity = '1';
+        } else {
+            fields.forEach(field => {
+                if (!field.hasAttribute('data-save-toggle') && field.name !== 'parameter_name') {
+                    field.value = initialValues[field.name];
+                    field.disabled = false;
+                }
+            });
+            customParamsDiv.style.opacity = '1';
+        }
     }
 
     function toggleParameterName() {
         parameterNameField.style.display = saveDefaultCheck.checked ? 'block' : 'none';
     }
 
-    parametersSelect.addEventListener('change', toggleCustomParameters);
+    parametersSelect.addEventListener('change', function() {
+        updateParameterFields(this.value);
+    });
+    
     saveDefaultCheck.addEventListener('change', toggleParameterName);
 
     // Initial state
-    toggleCustomParameters();
+    updateParameterFields(parametersSelect.value);
     toggleParameterName();
 });
 </script>
